@@ -2,28 +2,30 @@ import "./styles.css";
 import { useState, useEffect, useRef } from "react";
 
 export default function App() {
-  const [time, setTime] = useState(0); // in seconds
+  const [time, setTime] = useState(0); // time in seconds
   const [isRunning, setIsRunning] = useState(false);
-  const timerRef = useRef(null);
-
-  useEffect(() => {
-    if (isRunning) {
-      timerRef.current = setTimeout(() => {
-        setTime((prev) => prev + 1);
-      }, 1000);
-    }
-    return () => clearTimeout(timerRef.current);
-  }, [isRunning, time]);
+  const intervalRef = useRef(null);
 
   const handleStartStop = () => {
     setIsRunning((prev) => !prev);
   };
 
   const handleReset = () => {
-    clearTimeout(timerRef.current);
+    clearInterval(intervalRef.current);
     setIsRunning(false);
     setTime(0);
   };
+
+  useEffect(() => {
+    if (isRunning) {
+      intervalRef.current = setInterval(() => {
+        setTime((prev) => prev + 1);
+      }, 1000);
+    } else {
+      clearInterval(intervalRef.current);
+    }
+    return () => clearInterval(intervalRef.current);
+  }, [isRunning]);
 
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);
