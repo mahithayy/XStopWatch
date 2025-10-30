@@ -2,39 +2,39 @@ import "./styles.css";
 import { useState, useEffect, useRef } from "react";
 
 export default function App() {
-  const [timer, setTimer] = useState(0);
+  const [time, setTime] = useState(0); // in seconds
   const [isRunning, setIsRunning] = useState(false);
-  const timerId = useRef(null);
-
-  const handleStartStop = () => {
-    setIsRunning(!isRunning);
-  };
-
-  const handleReset = () => {
-    clearTimeout(timerId.current);
-    setTimer(0);
-    setIsRunning(false);
-  };
+  const timerRef = useRef(null);
 
   useEffect(() => {
     if (isRunning) {
-      timerId.current = setTimeout(() => {
-        setTimer((prev) => prev + 1);
+      timerRef.current = setTimeout(() => {
+        setTime((prev) => prev + 1);
       }, 1000);
     }
-    return () => clearTimeout(timerId.current);
-  }, [isRunning, timer]);
+    return () => clearTimeout(timerRef.current);
+  }, [isRunning, time]);
 
-  const formatTime = (time) => {
-    const mins = Math.floor(time / 60);
-    const secs = time % 60;
-    return `${mins}:${secs < 10 ? "0" : ""}${secs}`;
+  const handleStartStop = () => {
+    setIsRunning((prev) => !prev);
+  };
+
+  const handleReset = () => {
+    clearTimeout(timerRef.current);
+    setIsRunning(false);
+    setTime(0);
+  };
+
+  const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `Time: ${mins}:${secs < 10 ? "0" : ""}${secs}`;
   };
 
   return (
     <div className="App">
       <h1>Stopwatch</h1>
-      <h2>{formatTime(timer)}</h2>
+      <h2>{formatTime(time)}</h2>
       <button onClick={handleStartStop}>
         {isRunning ? "Stop" : "Start"}
       </button>
